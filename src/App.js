@@ -9,14 +9,13 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+        onClick={() => {
+          window.api.doSomething("Hello from the renderer process!");
+        }}
         >
           Learn React
-        </a>
+        </button>
       </header>
     </div>
   );
