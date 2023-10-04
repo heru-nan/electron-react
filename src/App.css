@@ -54,7 +54,7 @@ body {
   margin: 30px !important;
 }
 
-.game .board .cell {
+.cell {
   display: inline-block;
   width: var(--square-size);
   height: var(--square-size);
@@ -62,6 +62,10 @@ body {
   background: #fefdfd;
   box-sizing: border-box;
   vertical-align: bottom;
+}
+
+.red{
+  background: red;
 }
 
 .game .board .board-title {

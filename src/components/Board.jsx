@@ -1,15 +1,14 @@
 function Cell(props) {
     return (
       <div
-        className={
-          `cell ${props.cell === 1 ? "selected" : props.cell === 2 ? "ship" : ""}`
-        }
+        key={props.colIndex}
+        className={`cell ${props.cell === 1 ? "red" : props.cell === 2 ? "blue" : ""}`}
         onClick={props.onCellClick}
       />
     );
   }
   
-  export default function Board(props) {
+export default function Board(props) {
     return (
       <div className="board">
         {props.board.map((row, rowIndex) => (

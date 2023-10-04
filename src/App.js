@@ -40,10 +40,22 @@ export default function Game() {
   const handleCellClick = (cell, position) => {
     console.log(cell, position);
     if (building) {
+      console.log(board);
+      setBoard(
+        board.map((row, irow) =>
+          row.map((col, icol) => {
+            if (irow === position[0] && icol === position[1]) {
+              return 1;
+            }
+            return col;
+          })
+        )
+      );
+
       console.log(board)
-      board[position[0]][position[1]] = 1;
     }
   };
+
   return (
     <div className="game">
       <div className="heading">
