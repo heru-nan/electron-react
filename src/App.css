@@ -1,38 +1,144 @@
-.App {
+/* variables to configure theme */
+:root {
+  --square-size: 30px;
+  --ship-block-size: 15px;
+  --font-color: #785;
+  --background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
+  --ship-background-image: linear-gradient(135deg, #f05f57 10%, #360940 100%);
+  --missed-background-image: linear-gradient(135deg, #5efce8 10%, #736efe 100%);
+}
+
+body {
+  background: var(--background);
+  color: var(--font-color);
+}
+
+.heading {
+  margin: auto;
+  text-align: center;
+  position: relative;
+  text-transform: uppercase;
+}
+
+.heading h1 {
+  color: #777;
+  font-size: 2em;
+  font-weight: normal;
+  letter-spacing: 0.1em;
+  font-family: serif;
+  padding-top: 0.1em;
+  padding-bottom: 0.7em;
+  text-shadow: 0.07em 0.07em 0 rgba(0, 0, 0, 0.1);
+  margin: auto;
+}
+
+.heading h1::before,
+.heading h1::after {
+  content: "⛴";
+  display: inline-block;
+  opacity: 0.7;
+  margin: 0 0.6em;
+  font-size: 0.8em;
+}
+
+.game {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.game .board {
+  display: inline-block;
+  margin: auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.game .board .cell {
+  display: inline-block;
+  width: var(--square-size);
+  height: var(--square-size);
+  border: 1px solid #eee;
+  background: #fefdfd;
+  box-sizing: border-box;
+  vertical-align: bottom;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.game .board .board-title {
+  display: inline-block;
+  width: var(--square-size);
+  height: var(--square-size);
+  box-sizing: border-box;
+  vertical-align: bottom;
+  padding: 5px;
+  color: var(--font-color);
 }
 
-.App-link {
-  color: #61dafb;
+.game .board .selected {
+  background-image: var(--missed-background-image);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.game .board .selected.ship {
+  background-image: var(--ship-background-image);
+}
+
+.game .game-info .ship-info .ship-item .ship-block {
+  display: inline-block;
+  width: var(--ship-block-size);
+  height: var(--ship-block-size);
+  border: 1px solid #eee;
+  background: var(--missed-background-image);
+  box-sizing: border-box;
+}
+
+.game .game-info .ship-info .ship-item .ship-block.revealed {
+  background: var(--ship-background-image);
+}
+
+.description {
+  text-align: center;
+}
+
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal .modal-content {
+  margin: auto;
+  padding: 20px;
+  width: 90%;
+  color: #fff;
+  text-align: center;
+}
+
+.modal .modal-content h1 {
+  font-size: 4em;
+}
+
+.modal .modal-content button {
+  border: 3px solid #fff;
+  color: #fff;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  cursor: pointer;
+  padding: 20px 50px;
+  display: inline-block;
+  margin: 15px 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  outline: none;
+  position: relative;
+}
+
+.modal .modal-content button:hover {
+  color: var(--font-color);
+  background: #fff;
 }
