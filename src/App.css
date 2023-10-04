@@ -134,6 +134,10 @@ body {
   font-size: 4em;
 }
 
+.buildShip{
+  background-color: #777;
+}
+
 .modal .modal-content button {
   border: 3px solid #fff;
   color: #fff;
