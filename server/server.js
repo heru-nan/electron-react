@@ -1,27 +1,55 @@
 const dgram = require("dgram");
 const server = dgram.createSocket("udp4");
+// import all actions
+const {  connection, attack, lose, build, disconnect, select } = require("./actions.js");
 
 const PORT = 12345; // Puerto en el que el servidor escuchará
+
+global.players = [];
+global.boards = [];
 
 server.on("message", (msg, remoteInfo) => {
   try {
     const data = JSON.parse(msg.toString()) || {
       action: "default",
+    };
+
+    console.log("Mensaje recibido del cliente:", data);
+
+    let response = {
+      action: data.action,
+      status: 1, 
       position: [0, 0],
     };
 
-    // Aquí puedes procesar la acción del cliente y realizar las acciones necesarias
-    // según la acción recibida.
+    const user = `${remoteInfo.address}:${remoteInfo.port}`;
 
-    // log  mensaje recibido
-    console.log("Mensaje recibido del cliente:", data);
+    switch (data.action) {
+      case "c":
+        connection(user);
+        response.status = 1;
+        break;
+      case "a":
+        attack();
 
-    // Por ejemplo, aquí solo estamos enviando una respuesta de confirmación.
-    const response = {
-      action: data.action,
-      status: 1, // Simplemente confirmamos que recibimos el mensaje
-      position: data.position,
-    };
+        break;
+      case "l":
+        lose();  
+        break;
+      case "b":
+        build(user, data.ships);
+        break;
+      case "d":
+        disconnect();
+        break;
+      case "s":
+        select();
+        break;
+      default:
+        console.log("ACCION DESCONOCIDA")
+        break;
+    }
+
 
     // Enviamos la respuesta de vuelta al cliente
     server.send(
