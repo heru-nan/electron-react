@@ -2,9 +2,7 @@ function Cell(props) {
     return (
       <div
         className={
-          "cell " +
-          (props.cell.isSelected ? "selected " : "") +
-          (props.cell.isShip ? "ship " : "")
+          `cell ${props.cell === 1 ? "selected" : props.cell === 2 ? "ship" : ""}`
         }
         onClick={props.onCellClick}
       />
@@ -20,7 +18,7 @@ function Cell(props) {
               <Cell
                 key={rowIndex + "" + colIndex}
                 onCellClick={() =>
-                  props.onCellClick(cell)
+                  props.onCellClick(cell, [rowIndex, colIndex])
                 }
                 cell={cell}
               />

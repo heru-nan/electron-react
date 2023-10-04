@@ -23,7 +23,8 @@
     "pack-app": "yarn build-react && electron-builder --dir",
     "build": "yarn build-react && electron-builder",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "cd server && npx nodemon server.js "
   },
   "eslintConfig": {
     "extends": [

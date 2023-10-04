@@ -1,10 +1,10 @@
-import GameUtil from "./logic/GameUtil"
 import Board from "./components/Board";
 import GameInfo from "./components/GameInfo";
 import GameOver from "./components/GameOver";
 
-import './App.css';
-import React from 'react';
+import "./App.css";
+import React, { useEffect, useState } from "react";
+import GameUtil from "./logic/GameUtil";
 
 // function App() {
 //   return (
@@ -26,108 +26,49 @@ import React from 'react';
 //   );
 // }
 
+export default function Game() {
+  const gameUtil = new GameUtil(5);
+  const [board, setBoard] = useState(gameUtil.GenerateBoard());
+  const [enemyBoard, setEnemyBoard] = useState(gameUtil.GenerateBoard());
+  const [ships, setShips] = useState([]);
+  const [building, setBuilding] = useState(true);
 
-class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.gameInitialize();
-  }
+  useEffect(() => {
+    setBuilding(!ships?.length !== 3);
+  }, []);
 
-  gameInitialize() {
-    const gameUtil = new GameUtil(this.props.size);
-    const gameBoard = gameUtil.GenerateBoard();
-    // eslint-disable-next-line react/no-direct-mutation-state
-    this.state = {
-      board: gameBoard,
-      ships: gameUtil.ships,
-      shipBlocksRevealed: 0,
-      totalShipBlocks: gameUtil.totalShipBlocks,
-      totalShootCount: 0,
-      gameOver: false
-    };
-  }
-
-  handleCellClick(cell) {
-    if (cell.isSelected) {
-      return;
+  const handleCellClick = (cell, position) => {
+    console.log(cell, position);
+    if (building) {
+      console.log(board)
+      board[position[0]][position[1]] = 1;
     }
-    
-    let selectedItem = { ...cell };
-    selectedItem.isSelected = true;
-
-    let board = [...this.state.board];
-    board[cell.coordinates.x][cell.coordinates.y] = selectedItem;
-
-    let totalShootCount = this.state.totalShootCount;
-    totalShootCount += 1;
-
-    let shipBlocksRevealed = this.state.shipBlocksRevealed;
-    let ships = this.state.ships;
-    
-    if (selectedItem.isShip) {
-      shipBlocksRevealed += 1;
-      
-      for(let ship of ships){
-        let isBreak = false;
-        for(let shipCell of ship.points){
-          if(shipCell.x === cell.coordinates.x && shipCell.y === cell.coordinates.y){
-            shipCell.isRevealed = true;
-            isBreak = true;
-            break;
-          }
-        }
-        if(isBreak){
-          break;
-        }
-      }
-            
-    }
-
-    this.setState({
-      ships:ships,
-      board: board,
-      shipBlocksRevealed: shipBlocksRevealed,
-      totalShootCount: totalShootCount
-    });
-
-    if (shipBlocksRevealed === this.state.totalShipBlocks) {
-      this.setState({
-        gameOver: true
-      });
-    }
-  }
-
-  handlePlayAgain() {
-    this.gameInitialize();
-    
-    this.setState(this.state);
-  }
-
-  render() {
-    return (
-      <div className="game">
-        <div className="heading">
-          <h1>Battleship</h1>
-        </div>
-        <div className="game-board">
-          <Board
-            board={this.state.board}
-            onCellClick={(cell) =>
-              this.handleCellClick(cell)
-            }
-          />
-        </div>
-        <GameInfo ships={this.state.ships} />
-        {this.state.gameOver && (
-          <GameOver
-            game={this.state}
-            onPlayAgain={() => this.handlePlayAgain()}
-          />
-        )}
+  };
+  return (
+    <div className="game">
+      <div className="heading">
+        <h1>Battleship</h1>
       </div>
-    );
-  }
+      <div className="game-board">
+        <Board
+          title="Your Board"
+          board={board}
+          onCellClick={(cell, position) => handleCellClick(cell, position)}
+          ships={ships}
+          building={building}
+        />
+        <Board
+          title="Enemy Board"
+          board={enemyBoard}
+          onCellClick={(cell, position) =>
+            handleCellClick(cell, position, enemyBoard)
+          }
+        />
+      </div>
+      {/* <GameInfo ships={ships} />
+      {gameOver && (
+        <GameOver game={state} onPlayAgain={() => handlePlayAgain()} />
+      )} */}
+    </div>
+  );
 }
-
-
-export default Game;

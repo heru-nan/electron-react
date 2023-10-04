@@ -50,6 +50,10 @@ body {
   margin: auto;
 }
 
+.board{
+  margin: 30px !important;
+}
+
 .game .board .cell {
   display: inline-block;
   width: var(--square-size);
@@ -73,6 +77,11 @@ body {
 .game .board .selected {
   background-image: var(--missed-background-image);
 }
+
+.selected {
+  background-image: var(--missed-background-image);
+}
+
 
 .game .board .selected.ship {
   background-image: var(--ship-background-image);

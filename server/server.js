@@ -13,16 +13,16 @@ server.on("message", (msg, remoteInfo) => {
     const data = JSON.parse(msg.toString()) || {
       action: "default",
     };
+    const user = `${remoteInfo.address}:${remoteInfo.port}`;
 
-    console.log("Mensaje recibido del cliente:", data);
+
+    console.log("Mensaje recibido del cliente:", user);
 
     let response = {
       action: data.action,
       status: 1, 
       position: [0, 0],
     };
-
-    const user = `${remoteInfo.address}:${remoteInfo.port}`;
 
     switch (data.action) {
       case "c":
@@ -31,7 +31,6 @@ server.on("message", (msg, remoteInfo) => {
         break;
       case "a":
         attack();
-
         break;
       case "l":
         lose();  
