@@ -10,5 +10,5 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.on("test-receive", (event, data) => {
       callback(data);
     }),
-  doSomething: (args) => ipcRenderer.invoke("do-something", args),
+  call: (args) => ipcRenderer.invoke("call", args),
 });

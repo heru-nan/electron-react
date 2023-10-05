@@ -6,7 +6,7 @@ import "./App.css";
 import React, { useCallback, useEffect, useState } from "react";
 import GameUtil from "./logic/GameUtil";
 
-//           window.api.doSomething("Hello from the renderer process!");
+//           
 
 export default function Game() {
   const [board, setBoard] = useState(
@@ -67,6 +67,14 @@ export default function Game() {
     [board, building, currentShip, shipOrientation]
   );
 
+  const onBuild = () => {
+    const json = {
+      action: "b",
+      ships,
+    };
+    window.api.call(json);
+  }
+
   return (
     <div className="game">
       <div className="heading">
@@ -81,15 +89,15 @@ export default function Game() {
           building={building}
         />
 
-        {/* <Board
+        <Board
           title="Enemy Board"
           board={enemyBoard}
           onCellClick={(cell, position) =>
             handleCellClick(cell, position, enemyBoard)
           }
-        /> */}
+        />
       </div>
-      <button disabled={building} onClick={() => {}}>
+      <button disabled={building} onClick={() => onBuild()}>
         Construir
       </button>
       <div className="game-board">

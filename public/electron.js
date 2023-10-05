@@ -102,9 +102,11 @@ const clientMessage = {
   position: [7, 8],
 };
 
-ipcMain.handle("do-something", (event, args) => {
+ipcMain.handle("call", (event, args) => {
   // Convertir el objeto a una cadena JSON
-  const messageString = JSON.stringify(clientMessage);
+
+  console.log("CALL, ", args);
+  const messageString = JSON.stringify(args);
 
   client.send(messageString, SERVER_PORT, SERVER_ADDRESS, (error) => {
     if (error) {
