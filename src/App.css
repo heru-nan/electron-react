@@ -159,3 +159,9 @@ body {
   color: var(--font-color);
   background: #fff;
 }
+
+.connection{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}

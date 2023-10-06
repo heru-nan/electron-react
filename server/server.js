@@ -1,7 +1,14 @@
 const dgram = require("dgram");
 const server = dgram.createSocket("udp4");
 // import all actions
-const {  connection, attack, lose, build, disconnect, select } = require("./actions.js");
+const {
+  connection,
+  attack,
+  lose,
+  build,
+  disconnect,
+  select,
+} = require("./actions.js");
 
 const PORT = 12345; // Puerto en el que el servidor escuchará
 
@@ -15,12 +22,11 @@ server.on("message", (msg, remoteInfo) => {
     };
     const user = `${remoteInfo.address}:${remoteInfo.port}`;
 
-
     console.log("Mensaje recibido del cliente:", user);
 
     let response = {
       action: data.action,
-      status: 1, 
+      status: 1,
       position: [0, 0],
     };
 
@@ -33,10 +39,11 @@ server.on("message", (msg, remoteInfo) => {
         attack();
         break;
       case "l":
-        lose();  
+        lose();
         break;
       case "b":
-        build(user, data.ships);
+        const err = build(user, data.ships);
+        response.status = err;
         break;
       case "d":
         disconnect();
@@ -45,10 +52,9 @@ server.on("message", (msg, remoteInfo) => {
         select();
         break;
       default:
-        console.log("ACCION DESCONOCIDA")
+        console.log("ACCION DESCONOCIDA");
         break;
     }
-
 
     // Enviamos la respuesta de vuelta al cliente
     server.send(

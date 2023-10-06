@@ -6,7 +6,7 @@ import "./App.css";
 import React, { useCallback, useEffect, useState } from "react";
 import GameUtil from "./logic/GameUtil";
 
-//           
+//
 
 export default function Game() {
   const [board, setBoard] = useState(
@@ -23,12 +23,23 @@ export default function Game() {
   const [building, setBuilding] = useState(true);
   const [shipOrientation, setShipOrientation] = useState(1);
   const [currentShip, setCurrentShip] = useState(null);
+  const [route, setRoute] = useState({ ip: "", port: "" });
 
   useEffect(() => {
     if (ships.s?.length && ships.b?.length && ships.p?.length) {
       setBuilding(false);
     }
   }, [ships]);
+
+  useEffect(() => {
+    window.api.receive((_event, value) => {
+      console.log("in react, ", value);
+    });
+
+    return () => {
+      window.api.cleanReceive();
+    };
+  }, []);
 
   const handleCellClick = useCallback(
     (cell, position) => {
@@ -73,7 +84,12 @@ export default function Game() {
       ships,
     };
     window.api.call(json);
-  }
+  };
+
+  const onConnection = () => {
+    if (route.ip && route.port) {
+    }
+  };
 
   return (
     <div className="game">
@@ -118,6 +134,19 @@ export default function Game() {
         </button>
       </div>
 
+      <div class="connection">
+        <input
+          style={{ width: "100px" }}
+          val={route.ip}
+          onChange={(e) => setRoute({ ...route, ip: e.target.value })}
+        />
+        <input
+          style={{ width: "50px" }}
+          val={route.port}
+          onChange={(e) => setRoute({ ...route, port: e.target.value })}
+        />
+        <button onClick={() => onConnection()}>Conectar</button>
+      </div>
       {/* <GameInfo ships={ships} />
       {gameOver && (
         <GameOver game={state} onPlayAgain={() => handlePlayAgain()} />

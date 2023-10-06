@@ -11,4 +11,6 @@ contextBridge.exposeInMainWorld("api", {
       callback(data);
     }),
   call: (args) => ipcRenderer.invoke("call", args),
+  receive: (callback) => ipcRenderer.on("receive", callback),
+  cleanReceive: (callback) => ipcRenderer.removeAllListeners("receive"),
 });

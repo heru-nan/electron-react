@@ -14,10 +14,11 @@ const createWindow = () => {
       preload: isDev
         ? path.join(app.getAppPath(), "./public/preload.js") // Loading it from the public folder for dev
         : path.join(app.getAppPath(), "./build/preload.js"), // Loading it from the build folder for production
-      worldSafeExecuteJavaScript: true, // If you're using Electron 12+, this should be enabled by default and does not need to be added here.
       contextIsolation: true, // Isolating context so our app is not exposed to random javascript executions making it safer.
     },
   });
+
+  
 
   // Loading a webpage inside the electron window we just created
   mainWindow.loadURL(
@@ -26,14 +27,16 @@ const createWindow = () => {
       : `file://${path.join(__dirname, "../build/index.html")}` // Loading build file if in production
   );
 
+
   // Setting Window Icon - Asset file needs to be in the public/images folder.
-  mainWindow.setIcon(path.join(__dirname, "images/appicon.ico"));
+  // mainWindow.setIcon(path.join(__dirname, "images/appicon.ico"));
 
   // In development mode, if the window has loaded, then load the dev tools.
   if (isDev) {
     mainWindow.webContents.on("did-frame-finish-load", () => {
       mainWindow.webContents.openDevTools({ mode: "detach" });
     });
+
   }
 };
 
@@ -49,15 +52,32 @@ app.setPath(
 app.whenReady().then(async () => {
   await createWindow(); // Create the mainWindow
 
+  const clientMessage = {
+    action: "c", // Por ejemplo, "c" para conexión
+    bot: 0,
+    ships: {
+      p: [1, 2, 0],
+      b: [3, 4, 1],
+      s: [5, 6, 0],
+    },
+    position: [7, 8],
+  };
+
+
+  // setInterval(() => {
+  //   mainWindow.webContents.send("receive", clientMessage);
+  // }, 2000)
+
+  console.log("a")
   // If you want to add React Dev Tools
   if (isDev) {
-    // eslint-disable-next-line no-undef
-    await session.defaultSession
-      .loadExtension(
-        path.join(__dirname, `../userdata/extensions/react-dev-tools`) // This folder should have the chrome extension for React Dev Tools. Get it online or from your Chrome extensions folder.
-      )
-      .then((name) => console.log("Dev Tools Loaded"))
-      .catch((err) => console.log(err));
+    // // eslint-disable-next-line no-undef
+    // await session.defaultSession
+    //   .loadExtension(
+    //     path.join(__dirname, `../userdata/extensions/react-dev-tools`) // This folder should have the chrome extension for React Dev Tools. Get it online or from your Chrome extensions folder.
+    //   )
+    //   .then((name) => console.log("Dev Tools Loaded"))
+    //   .catch((err) => console.log(err));
   }
 });
 
@@ -91,17 +111,6 @@ const client = dgram.createSocket("udp4");
 const SERVER_PORT = 12345; // Puerto en el que el servidor escucha
 const SERVER_ADDRESS = "localhost"; //
 
-const clientMessage = {
-  action: "c", // Por ejemplo, "c" para conexión
-  bot: 0,
-  ships: {
-    p: [1, 2, 0],
-    b: [3, 4, 1],
-    s: [5, 6, 0],
-  },
-  position: [7, 8],
-};
-
 ipcMain.handle("call", (event, args) => {
   // Convertir el objeto a una cadena JSON
 
@@ -116,4 +125,11 @@ ipcMain.handle("call", (event, args) => {
       console.log("Mensaje enviado al servidor:", messageString);
     }
   });
+});
+
+// Recibir mensajes del servidor
+client.on("message", (message, remote) => {
+  console.log(`Mensaje recibido del servidor ${remote.address}:${remote.port}`);
+  const messageObject = JSON.parse(message);
+  mainWindow.webContents.send("receive", messageObject);
 });
