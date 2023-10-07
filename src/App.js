@@ -4,9 +4,6 @@ import GameOver from "./components/GameOver";
 
 import "./App.css";
 import React, { useCallback, useEffect, useState } from "react";
-import GameUtil from "./logic/GameUtil";
-
-//
 
 export default function Game() {
   const [board, setBoard] = useState(
@@ -24,6 +21,7 @@ export default function Game() {
   const [shipOrientation, setShipOrientation] = useState(1);
   const [currentShip, setCurrentShip] = useState(null);
   const [route, setRoute] = useState({ ip: "", port: "" });
+  const [connection, setConnection] = useState(false);
 
   useEffect(() => {
     if (ships.s?.length && ships.b?.length && ships.p?.length) {
@@ -34,6 +32,30 @@ export default function Game() {
   useEffect(() => {
     window.api.receive((_event, value) => {
       console.log("in react, ", value);
+      const { action, ships, position, status } = value;
+
+      if (status === 1) {
+        switch (action) {
+          case "c":
+            setConnection(true);
+            setBuilding(true);
+            break;
+          case "b":
+            setBuilding(false);
+            break;
+          case "a":
+            break;
+          case "l":
+            break;
+          case "d":
+            break;
+          case "s":
+            break;
+          default:
+            console.log("in react, ", value);
+            break;
+        }
+      }
     });
 
     return () => {
@@ -88,6 +110,11 @@ export default function Game() {
 
   const onConnection = () => {
     if (route.ip && route.port) {
+      window.api.call({
+        action: "c",
+        ip: route.ip,
+        port: route.port,
+      });
     }
   };
 
@@ -113,9 +140,7 @@ export default function Game() {
           }
         />
       </div>
-      <button disabled={building} onClick={() => onBuild()}>
-        Construir
-      </button>
+      <button onClick={() => onBuild()}>Construir</button>
       <div className="game-board">
         <button disabled={!building} onClick={() => setCurrentShip("s")}>
           Build S(3)
@@ -145,7 +170,9 @@ export default function Game() {
           val={route.port}
           onChange={(e) => setRoute({ ...route, port: e.target.value })}
         />
-        <button onClick={() => onConnection()}>Conectar</button>
+        <button onClick={() => onConnection()}>
+          {connection ? "Conectado" : "Conectar"}
+        </button>
       </div>
       {/* <GameInfo ships={ships} />
       {gameOver && (

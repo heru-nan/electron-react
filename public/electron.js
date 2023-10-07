@@ -18,15 +18,12 @@ const createWindow = () => {
     },
   });
 
-  
-
   // Loading a webpage inside the electron window we just created
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000" // Loading localhost if dev mode
       : `file://${path.join(__dirname, "../build/index.html")}` // Loading build file if in production
   );
-
 
   // Setting Window Icon - Asset file needs to be in the public/images folder.
   // mainWindow.setIcon(path.join(__dirname, "images/appicon.ico"));
@@ -36,7 +33,6 @@ const createWindow = () => {
     mainWindow.webContents.on("did-frame-finish-load", () => {
       mainWindow.webContents.openDevTools({ mode: "detach" });
     });
-
   }
 };
 
@@ -63,12 +59,11 @@ app.whenReady().then(async () => {
     position: [7, 8],
   };
 
-
   // setInterval(() => {
   //   mainWindow.webContents.send("receive", clientMessage);
   // }, 2000)
 
-  console.log("a")
+  console.log("a");
   // If you want to add React Dev Tools
   if (isDev) {
     // // eslint-disable-next-line no-undef
@@ -103,19 +98,20 @@ process.on("uncaughtException", (error) => {
   }
 });
 
-// UDP
-
 const dgram = require("dgram");
 const client = dgram.createSocket("udp4");
 
-const SERVER_PORT = 12345; // Puerto en el que el servidor escucha
-const SERVER_ADDRESS = "localhost"; //
+let SERVER_PORT = 0;
+let SERVER_ADDRESS = "0"; //
 
 ipcMain.handle("call", (event, args) => {
-  // Convertir el objeto a una cadena JSON
-
-  console.log("CALL, ", args);
   const messageString = JSON.stringify(args);
+
+  if (args.action === "c") {
+    SERVER_PORT = args.port;
+    SERVER_ADDRESS = args.ip;
+    console.log("Conectando al servidor:", SERVER_ADDRESS, SERVER_PORT);
+  }
 
   client.send(messageString, SERVER_PORT, SERVER_ADDRESS, (error) => {
     if (error) {

@@ -17,12 +17,14 @@ const build = (user, ships) => {
 
     console.log("Construyendo para: ", user);
     let board = getFromBoards(user); // pass by reference
+    // console.log("b", global.boards);
+    // console.log("ships", Object.entries(ships));
 
     for (const [key, ship] of Object.entries(ships)) {
-      console.log(key, ship);
+      // console.log("xx", key, ship);
       const size = sizes[key];
       const direction = ship[2];
-      if (direction === 0) {
+      if (direction === 1) {
         for (let i = 0; i < size; i++) {
           board.board[ship[0]][ship[1] + i] = 1;
         }
@@ -34,7 +36,8 @@ const build = (user, ships) => {
     }
 
     console.log(getFromBoards(user));
-  } catch {
+  } catch (error) {
+    console.log(error);
     return "User without board";
   }
 };

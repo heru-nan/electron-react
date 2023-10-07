@@ -44,6 +44,9 @@ server.on("message", (msg, remoteInfo) => {
       case "b":
         const err = build(user, data.ships);
         response.status = err;
+        if (!err) {
+          console.log("new board", global.boards[0]);
+        }
         break;
       case "d":
         disconnect();
