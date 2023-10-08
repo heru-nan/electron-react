@@ -24,12 +24,6 @@ export default function Game() {
   const [connection, setConnection] = useState(false);
 
   useEffect(() => {
-    if (ships.s?.length && ships.b?.length && ships.p?.length) {
-      setBuilding(false);
-    }
-  }, [ships]);
-
-  useEffect(() => {
     window.api.receive((_event, value) => {
       console.log("in react, ", value);
       const { action, ships, position, status } = value;
@@ -100,11 +94,21 @@ export default function Game() {
     [board, building, currentShip, shipOrientation]
   );
 
+  const handleCellClickAtack = useCallback((cell, position) => {
+    const json = {
+      action: "a",
+      position,
+    };
+
+    window.api.call(json);
+  }, []);
+
   const onBuild = () => {
     const json = {
       action: "b",
       ships,
     };
+
     window.api.call(json);
   };
 
@@ -133,15 +137,28 @@ export default function Game() {
         />
 
         <Board
-          title="Enemy Board"
+          tittle="Enemy Board"
           board={enemyBoard}
-          onCellClick={(cell, position) =>
-            handleCellClick(cell, position, enemyBoard)
-          }
+          onCellClick={(cell, position) => handleCellClickAtack(cell, position)}
         />
       </div>
-      <button onClick={() => onBuild()}>Construir</button>
-      <div className="game-board">
+      <div
+        className="game-board"
+        style={{
+          visibility: building ? "visible" : "hidden",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr | 1fr 1fr 1fr",
+          paddingLeft: "50px",
+          paddingRight: "50px",
+        }}
+      >
+        <button onClick={() => onBuild()}>Construir</button>
+        <button
+          disabled={!building}
+          onClick={() => setShipOrientation(shipOrientation === 1 ? 0 : 1)}
+        >
+          Orientacion: {shipOrientation === 1 ? "Horizontal" : "Vertical"}
+        </button>
         <button disabled={!building} onClick={() => setCurrentShip("s")}>
           Build S(3)
         </button>
@@ -150,12 +167,6 @@ export default function Game() {
         </button>
         <button disabled={!building} onClick={() => setCurrentShip("p")}>
           Build P(1)
-        </button>
-        <button
-          disabled={!building}
-          onClick={() => setShipOrientation(shipOrientation === 1 ? 0 : 1)}
-        >
-          Orientacion: {shipOrientation === 1 ? "Horizontal" : "Vertical"}
         </button>
       </div>
 

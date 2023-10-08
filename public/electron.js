@@ -21,7 +21,7 @@ const createWindow = () => {
   // Loading a webpage inside the electron window we just created
   mainWindow.loadURL(
     isDev
-      ? "http://localhost:3000" // Loading localhost if dev mode
+      ? `http://localhost:${process.env.PORT || 3000}` // Loading localhost if dev mode
       : `file://${path.join(__dirname, "../build/index.html")}` // Loading build file if in production
   );
 
