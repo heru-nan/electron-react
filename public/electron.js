@@ -127,5 +127,6 @@ ipcMain.handle("call", (event, args) => {
 client.on("message", (message, remote) => {
   console.log(`Mensaje recibido del servidor ${remote.address}:${remote.port}`);
   const messageObject = JSON.parse(message);
+  console.log(messageObject);
   mainWindow.webContents.send("receive", messageObject);
 });

@@ -104,6 +104,10 @@ body {
   background: var(--ship-background-image);
 }
 
+.ship{
+  background-image: var(--ship-background-image);
+}
+
 .description {
   text-align: center;
 }

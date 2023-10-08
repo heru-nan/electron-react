@@ -1,14 +1,34 @@
-const getFromBoards = (user) => {
-  return global.boards.find((board) => board.user === user);
-};
+const uuidv4 = require("uuid").v4;
+const { getFromBoards } = require("./getFromBoards.js");
 
 const connection = (user) => {
   console.log("Conectado al servidor: ", user);
+  const board = getFromBoards(user);
+  if (board)
+    return {
+      err: "User already connected",
+    };
+
   global.players.push(user);
   global.boards.push({
     user: user,
     board: Array.from(Array(5), () => new Array(5).fill(0)),
   });
+
+  const boardCount = global.boards.length;
+
+  if (boardCount % 2 === 0) {
+    const lastBoard = global.boards[boardCount - 2];
+    const newBoard = global.boards[boardCount - 1];
+    if (!lastBoard.id) {
+      lastBoard.id = uuidv4();
+      newBoard.id = lastBoard.id;
+    }
+  }
+
+  console.log("Actual connections: ", global.boards);
+
+  return {};
 };
 
 const build = (user, ships) => {
@@ -36,23 +56,46 @@ const build = (user, ships) => {
     }
 
     console.log(getFromBoards(user));
+    return {};
   } catch (error) {
     console.log(error);
-    return "User without board";
+    return { err: "User without board" };
   }
 };
 
-const attack = () => {
-  console.log("Atacando");
+// 2 means hit and 3 means miss
+const attack = (user, position) => {
+  try {
+    const boards = getFromBoards(user, "game");
+    let status = 0;
+    if (boards.length < 2) return { err: "No existe el tablero del oponente" };
+    console.log("EN ATACK", boards);
+    // find the board of the opponent using user field
+    const boardObj = boards.find((b) => b.user !== user);
+
+    if (boardObj.board[position[0]][position[1]] === 1) {
+      boardObj.board[position[0]][position[1]] = 2;
+      status = 1;
+    } else {
+      boardObj.board[position[0]][position[1]] = 3;
+    }
+    return { status, position };
+  } catch (error) {
+    console.log(error);
+    return { err: "WTF" };
+  }
 };
 const lose = () => {
   console.log("Perdiste");
+  return {};
 };
 const disconnect = () => {
   console.log("Desconectado");
+  return {};
 };
 const select = () => {
   console.log("Seleccionado");
+  return {};
 };
 
 module.exports = { connection, attack, lose, build, disconnect, select };

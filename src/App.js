@@ -26,11 +26,13 @@ export default function Game() {
   useEffect(() => {
     window.api.receive((_event, value) => {
       console.log("in react, ", value);
-      const { action, ships, position, status } = value;
+      const { action, ships, position, status, err } = value;
 
-      if (status === 1) {
+      if (!err) {
         switch (action) {
           case "c":
+            setBoard(Array.from(Array(5), () => new Array(5).fill(0)));
+            setEnemyBoard(Array.from(Array(5), () => new Array(5).fill(0)));
             setConnection(true);
             setBuilding(true);
             break;
@@ -38,6 +40,16 @@ export default function Game() {
             setBuilding(false);
             break;
           case "a":
+            if (status === 1) {
+              enemyBoard[position[0]][position[1]] = 2;
+              setEnemyBoard([...enemyBoard]);
+            } else if (status === 0) {
+              enemyBoard[position[0]][position[1]] = 1;
+              setEnemyBoard([...enemyBoard]);
+            } else if (status === -1) {
+              board[position[0]][position[1]] = 2;
+              setBoard([...board]);
+            }
             break;
           case "l":
             break;
@@ -55,7 +67,7 @@ export default function Game() {
     return () => {
       window.api.cleanReceive();
     };
-  }, []);
+  }, [board, enemyBoard]);
 
   const handleCellClick = useCallback(
     (cell, position) => {
@@ -112,7 +124,8 @@ export default function Game() {
     window.api.call(json);
   };
 
-  const onConnection = () => {
+  const onConnection = (e) => {
+    e.preventDefault();
     if (route.ip && route.port) {
       window.api.call({
         action: "c",
@@ -170,7 +183,7 @@ export default function Game() {
         </button>
       </div>
 
-      <div class="connection">
+      <form class="connection" onClick={(e) => onConnection(e)}>
         <input
           style={{ width: "100px" }}
           val={route.ip}
@@ -181,10 +194,8 @@ export default function Game() {
           val={route.port}
           onChange={(e) => setRoute({ ...route, port: e.target.value })}
         />
-        <button onClick={() => onConnection()}>
-          {connection ? "Conectado" : "Conectar"}
-        </button>
-      </div>
+        <button type="subimt">{connection ? "Conectado" : "Conectar"}</button>
+      </form>
       {/* <GameInfo ships={ships} />
       {gameOver && (
         <GameOver game={state} onPlayAgain={() => handlePlayAgain()} />

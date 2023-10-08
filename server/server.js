@@ -1,5 +1,6 @@
 const dgram = require("dgram");
 const server = dgram.createSocket("udp4");
+const { getFromBoards } = require("./getFromBoards.js");
 // import all actions
 const {
   connection,
@@ -26,25 +27,30 @@ server.on("message", (msg, remoteInfo) => {
 
     let response = {
       action: data.action,
-      status: 1,
+      status: -1,
       position: [0, 0],
     };
 
+    let result = {};
+
     switch (data.action) {
       case "c":
-        connection(user);
-        response.status = 1;
+        result = connection(user);
+        if (result.err) response.err = result.err;
         break;
       case "a":
-        attack();
+        result = attack(user, data.position);
+        response.position = result.position;
+        response.status = result.status;
+        if (result.err) response.err = result.err;
         break;
       case "l":
+        result = "x";
         lose();
         break;
       case "b":
-        const err = build(user, data.ships);
-        response.status = 1;
-        if (err) response.status = err;
+        result = build(user, data.ships);
+        if (result.err) response.err = result.err;
         break;
       case "d":
         disconnect();
@@ -57,17 +63,37 @@ server.on("message", (msg, remoteInfo) => {
         break;
     }
 
-    // Enviamos la respuesta de vuelta al cliente
-    server.send(
-      JSON.stringify(response),
-      remoteInfo.port,
-      remoteInfo.address,
-      (error) => {
-        if (error) {
-          console.error("Error al enviar la respuesta al cliente:", error);
+    if (!result.err && data.action === "a") {
+      getFromBoards(user, "game").forEach((userObj) => {
+        const userSplit = userObj.user.split(":");
+        const ip = userSplit[0];
+        const port = userSplit[1];
+
+        let newStatus = response.status;
+        if (user !== userObj.user) newStatus = -1;
+
+        server.send(
+          JSON.stringify({ ...response, status: newStatus }),
+          port,
+          ip,
+          (error) => {
+            if (error) {
+              console.error("Error al enviar la respuesta al cliente:", error);
+            }
+          }
+        );
+      });
+    } else
+      server.send(
+        JSON.stringify(response),
+        remoteInfo.port,
+        remoteInfo.address,
+        (error) => {
+          if (error) {
+            console.error("Error al enviar la respuesta al cliente:", error);
+          }
         }
-      }
-    );
+      );
   } catch (error) {
     console.error("Error al procesar el mensaje del cliente:", error);
   }
