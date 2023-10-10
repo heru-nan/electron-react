@@ -23,6 +23,16 @@ export default function Game() {
   const [route, setRoute] = useState({ ip: "", port: "" });
   const [connection, setConnection] = useState(false);
 
+  const clean = () => {
+    setShips({
+      s: null,
+      b: null,
+      p: null,
+    });
+    setBoard(Array.from(Array(5), () => new Array(5).fill(0)));
+    setEnemyBoard(Array.from(Array(5), () => new Array(5).fill(0)));
+  };
+
   useEffect(() => {
     window.api.receive((_event, value) => {
       console.log("in react, ", value);
@@ -31,10 +41,9 @@ export default function Game() {
       if (!err) {
         switch (action) {
           case "c":
-            setBoard(Array.from(Array(5), () => new Array(5).fill(0)));
-            setEnemyBoard(Array.from(Array(5), () => new Array(5).fill(0)));
             setConnection(true);
             setBuilding(true);
+            clean();
             break;
           case "b":
             setBuilding(false);
@@ -69,38 +78,76 @@ export default function Game() {
     };
   }, [board, enemyBoard]);
 
+  const setShipInboard = (position) => {
+    if (currentShip === "p") {
+      board[position[0]][position[1]] = 3;
+      setShips({ ...ships, p: [...position, shipOrientation] });
+    } else if (shipOrientation === 1) {
+      if (currentShip === "b") {
+        board[position[0]][position[1]] = 3;
+        board[position[0]][position[1] + 1] = 3;
+        setShips({ ...ships, b: [...position, shipOrientation] });
+      }
+      if (currentShip === "s") {
+        board[position[0]][position[1]] = 3;
+        board[position[0]][position[1] + 1] = 3;
+        board[position[0]][position[1] + 2] = 3;
+        setShips({ ...ships, s: [...position, shipOrientation] });
+      }
+    } else {
+      if (currentShip === "b") {
+        board[position[0]][position[1]] = 3;
+        board[position[0] + 1][position[1]] = 3;
+        setShips({ ...ships, b: [...position, shipOrientation] });
+      }
+      if (currentShip === "s") {
+        board[position[0]][position[1]] = 3;
+        board[position[0] + 1][position[1]] = 3;
+        board[position[0] + 2][position[1]] = 3;
+        setShips({ ...ships, s: [...position, shipOrientation] });
+      }
+    }
+    setBoard([...board]);
+  };
+
+  const cleanActualShip = () => {
+    let position = [];
+    if (currentShip === "p" && ships.p) position = ships.p;
+    else if (currentShip === "b" && ships.b) position = ships.b;
+    else if (currentShip === "s" && ships.s) position = ships.s;
+    else return;
+
+    if (currentShip === "p" && ships.p) {
+      board[position[0]][position[1]] = 0;
+    } else if (shipOrientation === 1) {
+      if (currentShip === "b") {
+        board[position[0]][position[1]] = 0;
+        board[position[0]][position[1] + 1] = 0;
+      }
+      if (currentShip === "s") {
+        board[position[0]][position[1]] = 0;
+        board[position[0]][position[1] + 1] = 0;
+        board[position[0]][position[1] + 2] = 0;
+      }
+    } else {
+      if (currentShip === "b") {
+        board[position[0]][position[1]] = 0;
+        board[position[0] + 1][position[1]] = 0;
+      }
+      if (currentShip === "s") {
+        board[position[0]][position[1]] = 0;
+        board[position[0] + 1][position[1]] = 0;
+        board[position[0] + 2][position[1]] = 0;
+      }
+    }
+    setBoard([...board]);
+  };
+
   const handleCellClick = useCallback(
     (cell, position) => {
       if (building && currentShip) {
-        if (currentShip === "p") {
-          board[position[0]][position[1]] = 3;
-          setShips({ ...ships, p: [...position, shipOrientation] });
-        } else if (shipOrientation === 1) {
-          if (currentShip === "b") {
-            board[position[0]][position[1]] = 3;
-            board[position[0]][position[1] + 1] = 3;
-            setShips({ ...ships, b: [...position, shipOrientation] });
-          }
-          if (currentShip === "s") {
-            board[position[0]][position[1]] = 3;
-            board[position[0]][position[1] + 1] = 3;
-            board[position[0]][position[1] + 2] = 3;
-            setShips({ ...ships, s: [...position, shipOrientation] });
-          }
-        } else {
-          if (currentShip === "b") {
-            board[position[0]][position[1]] = 3;
-            board[position[0] + 1][position[1]] = 3;
-            setShips({ ...ships, b: [...position, shipOrientation] });
-          }
-          if (currentShip === "s") {
-            board[position[0]][position[1]] = 3;
-            board[position[0] + 1][position[1]] = 3;
-            board[position[0] + 2][position[1]] = 3;
-            setShips({ ...ships, s: [...position, shipOrientation] });
-          }
-        }
-        setBoard([...board]);
+        cleanActualShip(position);
+        setShipInboard(position);
       }
     },
     [board, building, currentShip, shipOrientation]
@@ -121,7 +168,7 @@ export default function Game() {
       ships,
     };
 
-    window.api.call(json);
+    if (connection) window.api.call(json);
   };
 
   const onConnection = (e) => {
@@ -140,6 +187,12 @@ export default function Game() {
       <div className="heading">
         <h1>Battleship</h1>
       </div>
+      <button
+        style={{ position: "absolute", top: 0, right: 0, margin: "40px" }}
+        onClick={clean}
+      >
+        Limpiar
+      </button>
       <div className="game-board">
         <Board
           tittle="Your Board"

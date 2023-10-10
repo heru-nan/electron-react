@@ -32,6 +32,11 @@ const connection = (user) => {
 };
 
 const build = (user, ships) => {
+  global.boards.push({
+    user: user,
+    board: Array.from(Array(5), () => new Array(5).fill(0)),
+  });
+
   try {
     const sizes = { p: 1, b: 2, s: 3 };
 
