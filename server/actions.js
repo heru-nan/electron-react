@@ -44,11 +44,19 @@ const build = (user, ships) => {
       // console.log("xx", key, ship);
       const size = sizes[key];
       const direction = ship[2];
+      if (ship[0] < 0 || ship[0] > 4 || ship[1] < 0 || ship[1] > 4)
+        return { err: "Posicion invalida" };
+
       if (direction === 1) {
+        // check if ship position is valid
+        if (ship[1] + size > 5) return { err: "Posicion invalida" };
+
         for (let i = 0; i < size; i++) {
           board.board[ship[0]][ship[1] + i] = 1;
         }
       } else {
+        if (ship[0] + size > 5) return { err: "Posicion invalida" };
+
         for (let i = 0; i < size; i++) {
           board.board[ship[0] + i][ship[1]] = 1;
         }
@@ -66,6 +74,15 @@ const build = (user, ships) => {
 // 2 means hit and 3 means miss
 const attack = (user, position) => {
   try {
+    // create function to check if position is valid
+    if (
+      position[0] < 0 ||
+      position[0] > 4 ||
+      position[1] < 0 ||
+      position[1] > 4
+    )
+      return { err: "Posicion invalida" };
+
     const boards = getFromBoards(user, "game");
     let status = 0;
     if (boards.length < 2) return { err: "No existe el tablero del oponente" };
