@@ -15,19 +15,33 @@ const connection = (user) => {
     board: Array.from(Array(5), () => new Array(5).fill(0)),
   });
 
-  const boardCount = global.boards.length;
-
-  if (boardCount % 2 === 0) {
-    const lastBoard = global.boards[boardCount - 2];
-    const newBoard = global.boards[boardCount - 1];
-    if (!lastBoard.id) {
-      lastBoard.id = uuidv4();
-      newBoard.id = lastBoard.id;
-    }
-  }
-
   console.log("Actual connections: ", global.boards);
+  return {};
+};
 
+const select = (user) => {
+  try {
+    console.log("Seleccionando para ", user);
+    const boardCount = global.boards.length;
+
+    if (boardCount % 2 === 0) {
+      const lastBoard = global.boards[boardCount - 2];
+      const newBoard = global.boards[boardCount - 1];
+      if (!lastBoard.id) {
+        lastBoard.id = uuidv4();
+        newBoard.id = lastBoard.id;
+        lastBoard.turn = true;
+        newBoard.turn = false;
+        lastBoard.builded = false;
+        newBoard.builded = false;
+      }
+
+      return { play: [newBoard.user, lastBoard.user] };
+    }
+  } catch (error) {
+    console.log("seleccionando", error);
+    return { err: error };
+  }
   return {};
 };
 
@@ -42,6 +56,8 @@ const build = (user, ships) => {
 
     console.log("Construyendo para: ", user);
     let board = getFromBoards(user); // pass by reference
+
+    if (board.builded) return { err: "Already builded" };
     // console.log("b", global.boards);
     // console.log("ships", Object.entries(ships));
 
@@ -67,6 +83,8 @@ const build = (user, ships) => {
         }
       }
     }
+
+    board.builded = true;
 
     console.log(getFromBoards(user));
     return {};
@@ -113,10 +131,6 @@ const lose = () => {
 };
 const disconnect = () => {
   console.log("Desconectado");
-  return {};
-};
-const select = () => {
-  console.log("Seleccionado");
   return {};
 };
 

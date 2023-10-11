@@ -42,8 +42,12 @@ export default function Game() {
         switch (action) {
           case "c":
             setConnection(true);
-            setBuilding(true);
+            window.api.call({ action: "s", status: 0 });
             clean();
+            break;
+          case "s":
+            setBuilding(true);
+            console.log("Listo para jugar");
             break;
           case "b":
             setBuilding(false);
@@ -64,8 +68,7 @@ export default function Game() {
             break;
           case "d":
             break;
-          case "s":
-            break;
+
           default:
             console.log("in react, ", value);
             break;
