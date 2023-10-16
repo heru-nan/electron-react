@@ -55,13 +55,14 @@ server.on("message", (msg, remoteInfo) => {
       case "s":
         result = select(user);
         const { play, err } = result;
+        console.log("play", play);
         if (err || !play) {
           response.err = err;
           defaultResponse();
         } else
-          for (let userStr of play) {
-            if (userStr.includes("bot_")) continue;
-            const splitUser = userStr.split(":");
+          for (playerBoard of play) {
+            if (playerBoard.user.includes("bot_")) continue;
+            const splitUser = playerBoard.user.split(":");
             const ip = splitUser[0];
             const port = splitUser[1];
             server.send(
@@ -77,6 +78,20 @@ server.on("message", (msg, remoteInfo) => {
                 }
               }
             );
+            if (playerBoard.turn) {
+              const nport = port;
+              const nip = ip;
+              setTimeout(() => {
+                server.send(
+                  JSON.stringify({ action: "t", status: 1 }),
+                  nport,
+                  nip,
+                  (error) => {
+                    if (error) console.log(error);
+                  }
+                );
+              }, 500);
+            }
           }
         break;
       case "a":

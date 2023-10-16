@@ -52,7 +52,7 @@ const select = (user, bot = false) => {
         newBoard.builded = false;
       }
 
-      return { play: [newBoard.user, lastBoard.user] };
+      return { play: [newBoard, lastBoard] };
     }
   } catch (error) {
     console.log("seleccionando", error);
