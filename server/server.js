@@ -48,18 +48,19 @@ server.on("message", (msg, remoteInfo) => {
 
     switch (data.action) {
       case "c":
-        result = connection(user);
+        result = connection(user, data.bot);
         if (result.err) response.err = result.err;
         defaultResponse();
         break;
       case "s":
-        result = select();
+        result = select(user);
         const { play, err } = result;
         if (err || !play) {
           response.err = err;
           defaultResponse();
         } else
           for (let userStr of play) {
+            if (userStr.includes("bot_")) continue;
             const splitUser = userStr.split(":");
             const ip = splitUser[0];
             const port = splitUser[1];

@@ -25,8 +25,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "cd server && npx nodemon server.js ",
-    "set-port-4000": "$env:PORT 4000",
-    "set-port-3000": "$env:PORT 3000"
+    "set-port-4000": "$env:PORT=4000",
+    "set-port-3000": "$env:PORT=3000"
   },
   "eslintConfig": {
     "extends": [

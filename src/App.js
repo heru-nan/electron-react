@@ -17,11 +17,12 @@ export default function Game() {
     b: null,
     p: null,
   });
-  const [building, setBuilding] = useState(true);
+  const [building, setBuilding] = useState(false);
   const [shipOrientation, setShipOrientation] = useState(1);
   const [currentShip, setCurrentShip] = useState(null);
   const [route, setRoute] = useState({ ip: "", port: "" });
   const [connection, setConnection] = useState(false);
+  const [botStatus, setBotStatus] = useState(false);
 
   const clean = () => {
     setShips({
@@ -42,7 +43,7 @@ export default function Game() {
         switch (action) {
           case "c":
             setConnection(true);
-            window.api.call({ action: "s", status: 0 });
+            window.api.call({ action: "s", bot: botStatus ? 1 : 0 });
             clean();
             break;
           case "s":
@@ -250,12 +251,20 @@ export default function Game() {
           val={route.port}
           onChange={(e) => setRoute({ ...route, port: e.target.value })}
         />
-        <button type="subimt">{connection ? "Conectado" : "Conectar"}</button>
+        <button type="submit">{connection ? "Conectado" : "Conectar"}</button>
       </form>
       {/* <GameInfo ships={ships} />
       {gameOver && (
         <GameOver game={state} onPlayAgain={() => handlePlayAgain()} />
       )} */}
+      <button
+        onClick={() => {
+          setBotStatus(!botStatus);
+        }}
+        style={{ position: "absolute", bottom: 0, left: 0 }}
+      >
+        {botStatus ? "Desactivar Bot" : "Activar Bot"}
+      </button>
     </div>
   );
 }

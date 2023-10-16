@@ -16,13 +16,29 @@ const connection = (user) => {
   });
 
   console.log("Actual connections: ", global.boards);
+
   return {};
 };
 
-const select = (user) => {
+const select = (user, bot = false) => {
   try {
     console.log("Seleccionando para ", user);
     const boardCount = global.boards.length;
+
+    if (bot && bourdCount % 2 !== 0) {
+      const botUser = `bot_${user}`;
+      global.players.push(botUser);
+      global.boards.push({
+        user: botUser,
+        board: [
+          [0, 1, 1, 1, 0],
+          [0, 0, 0, 0, 0],
+          [1, 0, 0, 0, 0],
+          [0, 0, 0, 1, 0],
+          [0, 0, 0, 1, 0],
+        ],
+      });
+    }
 
     if (boardCount % 2 === 0) {
       const lastBoard = global.boards[boardCount - 2];
