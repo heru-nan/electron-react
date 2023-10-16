@@ -23,6 +23,7 @@ export default function Game() {
   const [route, setRoute] = useState({ ip: "", port: "" });
   const [connection, setConnection] = useState(false);
   const [botStatus, setBotStatus] = useState(false);
+  const [yourTurn, setYourTurn] = useState(false);
 
   const clean = () => {
     setShips({
@@ -54,15 +55,25 @@ export default function Game() {
             setBuilding(false);
             break;
           case "a":
-            if (status === 1) {
+            if (yourTurn && status === 1) {
               enemyBoard[position[0]][position[1]] = 2;
               setEnemyBoard([...enemyBoard]);
-            } else if (status === 0) {
+            } else if (yourTurn && status === 0) {
               enemyBoard[position[0]][position[1]] = 1;
               setEnemyBoard([...enemyBoard]);
-            } else if (status === -1) {
+            } else if (!yourTurn && status === 1) {
               board[position[0]][position[1]] = 2;
               setBoard([...board]);
+            } else if (!yourTurn && status === 0) {
+              board[position[0]][position[1]] = 1;
+              setBoard([...board]);
+            }
+
+            setYourTurn(false);
+            break;
+          case "t":
+            if (status === 1) {
+              setYourTurn(true);
             }
             break;
           case "l":
@@ -80,7 +91,7 @@ export default function Game() {
     return () => {
       window.api.cleanReceive();
     };
-  }, [board, enemyBoard]);
+  }, [board, enemyBoard, yourTurn]);
 
   const setShipInboard = (position) => {
     if (currentShip === "p") {
@@ -157,14 +168,19 @@ export default function Game() {
     [board, building, currentShip, shipOrientation]
   );
 
-  const handleCellClickAtack = useCallback((cell, position) => {
-    const json = {
-      action: "a",
-      position,
-    };
-
-    window.api.call(json);
-  }, []);
+  const handleCellClickAtack = useCallback(
+    (cell, position) => {
+      console.log("yp", yourTurn);
+      if (yourTurn) {
+        const json = {
+          action: "a",
+          position,
+        };
+        window.api.call(json);
+      }
+    },
+    [yourTurn]
+  );
 
   const onBuild = () => {
     const json = {
@@ -265,6 +281,7 @@ export default function Game() {
       >
         {botStatus ? "Desactivar Bot" : "Activar Bot"}
       </button>
+      <p>{yourTurn ? "Es tu turno" : "Esperando..."}</p>
     </div>
   );
 }

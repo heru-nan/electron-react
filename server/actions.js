@@ -123,6 +123,10 @@ const attack = (user, position) => {
       return { err: "Posicion invalida" };
 
     const boards = getFromBoards(user, "game");
+    const userBoardObj = boards.find((b) => b.user === user);
+
+    if (!userBoardObj.turn) return { err: "No es tu turno" };
+
     let status = 0;
     if (boards.length < 2) return { err: "No existe el tablero del oponente" };
     console.log("EN ATACK", boards);

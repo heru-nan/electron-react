@@ -96,20 +96,25 @@ server.on("message", (msg, remoteInfo) => {
         break;
       case "a":
         result = attack(user, data.position);
-        response.position = result.position;
-        response.status = result.status;
-        if (result.err) response.err = result.err;
+        if (result.err) {
+          response.err = result.err;
+        }
+        // response.position = result.position;
+        // response.status = result.status;
         else {
-          getFromBoards(user, "game").forEach((userObj) => {
-            const userSplit = userObj.user.split(":");
+          getFromBoards(user, "game").forEach((playerBoard) => {
+            const userSplit = playerBoard.user.split(":");
             const ip = userSplit[0];
             const port = userSplit[1];
 
-            let newStatus = response.status;
-            if (user !== userObj.user) newStatus = -1;
+            playerBoard.turn = !playerBoard.turn;
 
             server.send(
-              JSON.stringify({ ...response, status: newStatus }),
+              JSON.stringify({
+                ...response,
+                position: result.position,
+                status: result.status,
+              }),
               port,
               ip,
               (error) => {
@@ -121,6 +126,17 @@ server.on("message", (msg, remoteInfo) => {
                 }
               }
             );
+
+            if (playerBoard.turn) {
+              server.send(
+                JSON.stringify({ action: "t", status: 1 }),
+                port,
+                ip,
+                (error) => {
+                  if (error) console.log(error);
+                }
+              );
+            }
           });
         }
         break;
