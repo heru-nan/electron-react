@@ -27,6 +27,8 @@ export default function Game() {
   const [win, setWin] = useState(false);
   const [lose, setLose] = useState(false);
 
+  let gameOver = win || lose;
+
   const clean = () => {
     setShips({
       s: null,
@@ -35,6 +37,10 @@ export default function Game() {
     });
     setBoard(Array.from(Array(5), () => new Array(5).fill(0)));
     setEnemyBoard(Array.from(Array(5), () => new Array(5).fill(0)));
+  };
+
+  const disconnect = () => {
+    window.api.call({ action: "d" });
   };
 
   useEffect(() => {
@@ -50,8 +56,8 @@ export default function Game() {
             clean();
             break;
           case "s":
-            setBuilding(true);
-            console.log("Listo para jugar");
+            if (status === 1) setBuilding(true);
+            //console.log("Listo para jugar");
             break;
           case "b":
             setBuilding(false);
@@ -85,6 +91,7 @@ export default function Game() {
             setWin(true);
             break;
           case "d":
+            // refresh this component
             break;
 
           default:
@@ -177,7 +184,7 @@ export default function Game() {
   const handleCellClickAtack = useCallback(
     (cell, position) => {
       console.log("yp", yourTurn);
-      if (yourTurn) {
+      if (!building && yourTurn) {
         const json = {
           action: "a",
           position,
@@ -185,7 +192,7 @@ export default function Game() {
         window.api.call(json);
       }
     },
-    [yourTurn]
+    [yourTurn, building]
   );
 
   const onBuild = () => {
@@ -215,7 +222,7 @@ export default function Game() {
       </div>
       <button
         style={{ position: "absolute", top: 0, right: 0, margin: "40px" }}
-        onClick={clean}
+        onClick={disconnect}
       >
         Limpiar
       </button>
@@ -276,15 +283,14 @@ export default function Game() {
         <button type="submit">{connection ? "Conectado" : "Conectar"}</button>
       </form>
       {/* <GameInfo ships={ships} /> */}
-      {win ||
-        (lose && (
-          <GameOver
-            win={win}
-            onPlayAgain={() => {
-              console.log("a");
-            }}
-          />
-        ))}
+      {gameOver && (
+        <GameOver
+          win={win}
+          onPlayAgain={() => {
+            console.log("a");
+          }}
+        />
+      )}
       <button
         onClick={() => {
           setBotStatus(!botStatus);

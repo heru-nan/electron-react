@@ -64,11 +64,6 @@ const select = (user, bot = false) => {
 };
 
 const build = (user, ships) => {
-  global.boards.push({
-    user: user,
-    board: Array.from(Array(5), () => new Array(5).fill(0)),
-  });
-
   try {
     const sizes = { p: 1, b: 2, s: 3 };
 
@@ -142,7 +137,7 @@ const attack = (user, position) => {
     } else {
       boardObj.board[position[0]][position[1]] = 3;
     }
-    return { status, position, win: boardObj.hits === 5 };
+    return { status, position, win: boardObj.hits === 6 };
   } catch (error) {
     console.log(error);
     return { err: "WTF" };
@@ -152,9 +147,22 @@ const lose = () => {
   console.log("Perdiste");
   return {};
 };
-const disconnect = () => {
-  console.log("Desconectado");
-  return {};
+const disconnect = (user) => {
+  try {
+    const board = getFromBoards(user);
+
+    // delete board from global.boards
+    global.boards = global.boards.filter((b) => {
+      if (b.id === board.id) delete b.id;
+      return b.user !== user;
+    });
+
+    console.log("Desconectado", global.boards);
+    return {};
+  } catch (error) {
+    console.log(error);
+    return { err: "User is not defined" };
+  }
 };
 
 module.exports = { connection, attack, lose, build, disconnect, select };

@@ -31,7 +31,7 @@ const createWindow = () => {
   // In development mode, if the window has loaded, then load the dev tools.
   if (isDev) {
     mainWindow.webContents.on("did-frame-finish-load", () => {
-      mainWindow.webContents.openDevTools({ mode: "detach" });
+      // mainWindow.webContents.openDevTools({ mode: "detach" });
     });
   }
 };

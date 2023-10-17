@@ -5,13 +5,11 @@ export default function GameOver(props) {
     return (
       <div className="modal">
         <div className="modal-content">
-          <h1>Game Over</h1>
-          {win ? <p>
-            Todos tus barcos fueron destruidos <strong>F</strong>{" "}
-            .
+          <h1 style={{background: win ? "#B9D9EB": "salmon"}} >{win ? "Victoria": "Derrota"}</h1>
+          {!win ? <p>
+            Todos tus barcos fueron destruidos <strong>F</strong>
           </p>: <p>
-            Destruiste todos los barcos, para presentar tus respeto<strong>F s</strong>{" "}
-            .
+            Destruiste todos los barcos, presenta tus respetos:<strong>{' '}F</strong>
           </p>}
           <button onClick={props.onPlayAgain}> Play Again </button>
         </div>

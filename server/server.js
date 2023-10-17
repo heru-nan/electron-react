@@ -169,10 +169,14 @@ server.on("message", (msg, remoteInfo) => {
       case "b":
         result = build(user, data.ships);
         if (result.err) response.err = result.err;
+        else response.status = 1;
         defaultResponse();
         break;
       case "d":
-        disconnect();
+        result = disconnect(user);
+        if (result.err) response.err = result.err;
+        else response.status = 1;
+        defaultResponse();
         break;
 
       default:
