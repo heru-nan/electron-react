@@ -24,6 +24,8 @@ export default function Game() {
   const [connection, setConnection] = useState(false);
   const [botStatus, setBotStatus] = useState(false);
   const [yourTurn, setYourTurn] = useState(false);
+  const [win, setWin] = useState(false);
+  const [lose, setLose] = useState(false);
 
   const clean = () => {
     setShips({
@@ -77,6 +79,10 @@ export default function Game() {
             }
             break;
           case "l":
+            setLose(true);
+            break;
+          case "w":
+            setWin(true);
             break;
           case "d":
             break;
@@ -269,10 +275,16 @@ export default function Game() {
         />
         <button type="submit">{connection ? "Conectado" : "Conectar"}</button>
       </form>
-      {/* <GameInfo ships={ships} />
-      {gameOver && (
-        <GameOver game={state} onPlayAgain={() => handlePlayAgain()} />
-      )} */}
+      {/* <GameInfo ships={ships} /> */}
+      {win ||
+        (lose && (
+          <GameOver
+            win={win}
+            onPlayAgain={() => {
+              console.log("a");
+            }}
+          />
+        ))}
       <button
         onClick={() => {
           setBotStatus(!botStatus);

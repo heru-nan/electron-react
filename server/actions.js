@@ -13,6 +13,7 @@ const connection = (user) => {
   global.boards.push({
     user: user,
     board: Array.from(Array(5), () => new Array(5).fill(0)),
+    hits: 0,
   });
 
   console.log("Actual connections: ", global.boards);
@@ -25,7 +26,7 @@ const select = (user, bot = false) => {
     console.log("Seleccionando para ", user);
     const boardCount = global.boards.length;
 
-    if (bot && bourdCount % 2 !== 0) {
+    if (bot && boardCount % 2 !== 0) {
       const botUser = `bot_${user}`;
       global.players.push(botUser);
       global.boards.push({
@@ -37,6 +38,7 @@ const select = (user, bot = false) => {
           [0, 0, 0, 1, 0],
           [0, 0, 0, 1, 0],
         ],
+        hits: 0,
       });
     }
 
@@ -136,10 +138,11 @@ const attack = (user, position) => {
     if (boardObj.board[position[0]][position[1]] === 1) {
       boardObj.board[position[0]][position[1]] = 2;
       status = 1;
+      boardObj.hits++;
     } else {
       boardObj.board[position[0]][position[1]] = 3;
     }
-    return { status, position };
+    return { status, position, win: boardObj.hits === 5 };
   } catch (error) {
     console.log(error);
     return { err: "WTF" };

@@ -1,16 +1,18 @@
 export default function GameOver(props) {
-    let game = props.game;
+    let win = props.win;
   
-    let accuracy = 100 * game.totalShipBlocks / game.totalShootCount;
   
     return (
       <div className="modal">
         <div className="modal-content">
           <h1>Game Over</h1>
-          <p>
-            You have sunk all ships with <strong>{parseInt(accuracy)}% </strong>{" "}
-            accuracy
-          </p>
+          {win ? <p>
+            Todos tus barcos fueron destruidos <strong>F</strong>{" "}
+            .
+          </p>: <p>
+            Destruiste todos los barcos, para presentar tus respeto<strong>F s</strong>{" "}
+            .
+          </p>}
           <button onClick={props.onPlayAgain}> Play Again </button>
         </div>
       </div>

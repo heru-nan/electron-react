@@ -60,7 +60,7 @@ server.on("message", (msg, remoteInfo) => {
           response.err = err;
           defaultResponse();
         } else
-          for (playerBoard of play) {
+          for (let playerBoard of play) {
             if (playerBoard.user.includes("bot_")) continue;
             const splitUser = playerBoard.user.split(":");
             const ip = splitUser[0];
@@ -130,6 +130,28 @@ server.on("message", (msg, remoteInfo) => {
             if (playerBoard.turn) {
               server.send(
                 JSON.stringify({ action: "t", status: 1 }),
+                port,
+                ip,
+                (error) => {
+                  if (error) console.log(error);
+                }
+              );
+            }
+
+            if (result.win && !playerBoard.turn) {
+              server.send(
+                JSON.stringify({ action: "w", status: 1 }),
+                port,
+                ip,
+                (error) => {
+                  if (error) console.log(error);
+                }
+              );
+            }
+
+            if (result.win && playerBoard.turn) {
+              server.send(
+                JSON.stringify({ action: "l", status: 1 }),
                 port,
                 ip,
                 (error) => {
