@@ -15,6 +15,42 @@ const PORT = 12345; // Puerto en el que el servidor escuchará
 
 global.players = [];
 global.boards = [];
+global.botAttack = [
+  [0, 0],
+  [0, 1],
+  [0, 2],
+  [0, 3],
+  [0, 4],
+
+  [1, 0],
+  [1, 1],
+  [1, 2],
+  [1, 3],
+  [1, 4],
+
+  [2, 0],
+  [2, 1],
+  [2, 2],
+  [2, 3],
+  [2, 4],
+
+  [3, 0],
+  [3, 1],
+  [3, 2],
+  [3, 3],
+  [3, 4],
+
+  [4, 0],
+  [4, 1],
+  [4, 2],
+  [4, 3],
+  [4, 4],
+];
+
+server.on("error", (err) => {
+  console.error("Error en el servidor:", err);
+  server.close();
+});
 
 server.on("message", (msg, remoteInfo) => {
   try {
@@ -48,12 +84,12 @@ server.on("message", (msg, remoteInfo) => {
 
     switch (data.action) {
       case "c":
-        result = connection(user, data.bot);
+        result = connection(user);
         if (result.err) response.err = result.err;
         defaultResponse();
         break;
       case "s":
-        result = select(user);
+        result = select(user, data.bot === 1);
         const { play, err } = result;
         console.log("play", play);
         if (err || !play) {
@@ -96,13 +132,18 @@ server.on("message", (msg, remoteInfo) => {
         break;
       case "a":
         result = attack(user, data.position);
+        const boards = getFromBoards(user, "game");
+
         if (result.err) {
           response.err = result.err;
+          break;
         }
         // response.position = result.position;
         // response.status = result.status;
         else {
-          getFromBoards(user, "game").forEach((playerBoard) => {
+          boards.forEach((playerBoard) => {
+            if (playerBoard.user.includes("bot_")) return;
+
             const userSplit = playerBoard.user.split(":");
             const ip = userSplit[0];
             const port = userSplit[1];
@@ -160,6 +201,51 @@ server.on("message", (msg, remoteInfo) => {
               );
             }
           });
+        }
+
+        if (boards.find((board) => board.user?.includes("bot_"))) {
+          // setTimeout(() => {
+          const playerBoard = result.userObj;
+          const botBoard = result.botObj;
+
+          const attackPosition = botBoard.botAttack?.pop();
+          if (playerBoard.board[attackPosition[0]][attackPosition[1]] === 1) {
+            playerBoard.board[attackPosition[0]][attackPosition[1]] = 2;
+            playerBoard.hits++;
+          } else {
+            playerBoard.board[attackPosition[0]][attackPosition[1]] = 3;
+          }
+
+          const userSplit = playerBoard.user.split(":");
+          const ip = userSplit[0];
+          const port = userSplit[1];
+          server.send(
+            JSON.stringify({
+              action: "a",
+              status: 1,
+
+              position: attackPosition,
+            }),
+            port,
+            ip,
+            (error) => {
+              if (error) console.log(error);
+            }
+          );
+
+          playerBoard.turn = true;
+          botBoard.turn = false;
+
+          server.send(
+            JSON.stringify({ action: "t", status: 1 }),
+            port,
+            ip,
+            (error) => {
+              if (error) console.log(error);
+            }
+          );
+
+          // }, 500);
         }
         break;
       case "l":

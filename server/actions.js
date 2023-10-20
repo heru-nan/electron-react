@@ -24,7 +24,7 @@ const connection = (user) => {
 const select = (user, bot = false) => {
   try {
     console.log("Seleccionando para ", user);
-    const boardCount = global.boards.length;
+    let boardCount = global.boards.length;
 
     if (bot && boardCount % 2 !== 0) {
       const botUser = `bot_${user}`;
@@ -39,7 +39,10 @@ const select = (user, bot = false) => {
           [0, 0, 0, 1, 0],
         ],
         hits: 0,
+        botAttack: [...global.botAttack],
       });
+
+      boardCount++;
     }
 
     if (boardCount % 2 === 0) {
@@ -50,7 +53,8 @@ const select = (user, bot = false) => {
         newBoard.id = lastBoard.id;
         lastBoard.turn = true;
         newBoard.turn = false;
-        lastBoard.builded = false;
+        if (bot) newBoard.builded = true;
+        else lastBoard.builded = false;
         newBoard.builded = false;
       }
 
@@ -137,7 +141,14 @@ const attack = (user, position) => {
     } else {
       boardObj.board[position[0]][position[1]] = 3;
     }
-    return { status, position, win: boardObj.hits === 6 };
+
+    return {
+      status,
+      position,
+      win: boardObj.hits === 6,
+      userObj: userBoardObj,
+      botObj: boardObj,
+    };
   } catch (error) {
     console.log(error);
     return { err: "WTF" };

@@ -104,7 +104,7 @@ export default function Game() {
     return () => {
       window.api.cleanReceive();
     };
-  }, [board, enemyBoard, yourTurn]);
+  }, [board, enemyBoard, yourTurn, botStatus]);
 
   const setShipInboard = (position) => {
     if (currentShip === "p") {
