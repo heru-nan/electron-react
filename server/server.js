@@ -207,11 +207,12 @@ server.on("message", (msg, remoteInfo) => {
           // setTimeout(() => {
           const playerBoard = result.userObj;
           const botBoard = result.botObj;
-
+          let status = 0;
           const attackPosition = botBoard.botAttack?.pop();
           if (playerBoard.board[attackPosition[0]][attackPosition[1]] === 1) {
             playerBoard.board[attackPosition[0]][attackPosition[1]] = 2;
             playerBoard.hits++;
+            status = 1;
           } else {
             playerBoard.board[attackPosition[0]][attackPosition[1]] = 3;
           }
@@ -222,8 +223,7 @@ server.on("message", (msg, remoteInfo) => {
           server.send(
             JSON.stringify({
               action: "a",
-              status: 1,
-
+              status,
               position: attackPosition,
             }),
             port,
