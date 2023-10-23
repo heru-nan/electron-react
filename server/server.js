@@ -133,7 +133,7 @@ server.on("message", (msg, remoteInfo) => {
       case "a":
         result = attack(user, data.position);
         const boards = getFromBoards(user, "game");
-
+        // console.log("result atack: ", result);
         if (result.err) {
           response.err = result.err;
           break;
@@ -220,6 +220,18 @@ server.on("message", (msg, remoteInfo) => {
           const userSplit = playerBoard.user.split(":");
           const ip = userSplit[0];
           const port = userSplit[1];
+
+          if (playerBoard.hits === 6) {
+            server.send(
+              JSON.stringify({ action: "l", status: 1 }),
+              port,
+              ip,
+              (error) => {
+                if (error) console.log(error);
+              }
+            );
+          }
+
           server.send(
             JSON.stringify({
               action: "a",
