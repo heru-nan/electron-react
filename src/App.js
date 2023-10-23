@@ -41,6 +41,22 @@ export default function Game() {
 
   const disconnect = () => {
     window.api.call({ action: "d" });
+    setBoard(Array.from(Array(5), () => new Array(5).fill(0)));
+    setEnemyBoard(Array.from(Array(5), () => new Array(5).fill(0)));
+    setShips({
+      s: null,
+      b: null,
+      p: null,
+    });
+    setBuilding(false);
+    setShipOrientation(1);
+    setCurrentShip(null);
+    setRoute({ ip: "", port: "" });
+    setConnection(false);
+    setBotStatus(false);
+    setYourTurn(false);
+    setWin(false);
+    setLose(false);
   };
 
   useEffect(() => {
@@ -92,6 +108,22 @@ export default function Game() {
             break;
           case "d":
             // refresh this component
+            // setBoard(Array.from(Array(5), () => new Array(5).fill(0)));
+            // setEnemyBoard(Array.from(Array(5), () => new Array(5).fill(0)));
+            // setShips({
+            //   s: null,
+            //   b: null,
+            //   p: null,
+            // });
+            // setBuilding(false);
+            // setShipOrientation(1);
+            // setCurrentShip(null);
+            // setRoute({ ip: "", port: "" });
+            // setConnection(false);
+            // setBotStatus(false);
+            // setYourTurn(false);
+            // setWin(false);
+            // setLose(false);
             break;
 
           default:
@@ -272,25 +304,18 @@ export default function Game() {
       <form class="connection" onClick={(e) => onConnection(e)}>
         <input
           style={{ width: "100px" }}
-          val={route.ip}
+          value={route.ip}
           onChange={(e) => setRoute({ ...route, ip: e.target.value })}
         />
         <input
           style={{ width: "50px" }}
-          val={route.port}
+          value={route.port}
           onChange={(e) => setRoute({ ...route, port: e.target.value })}
         />
         <button type="submit">{connection ? "Conectado" : "Conectar"}</button>
       </form>
       {/* <GameInfo ships={ships} /> */}
-      {gameOver && (
-        <GameOver
-          win={win}
-          onPlayAgain={() => {
-            console.log("a");
-          }}
-        />
-      )}
+      {gameOver && <GameOver win={win} onPlayAgain={disconnect} />}
       <button
         onClick={() => {
           setBotStatus(!botStatus);

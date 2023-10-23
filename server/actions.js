@@ -164,8 +164,9 @@ const disconnect = (user) => {
 
     // delete board from global.boards
     global.boards = global.boards.filter((b) => {
-      if (b.id === board.id) delete b.id;
-      return b.user !== user;
+      if (b.id && board.id && board.id === b.id) return false;
+      if (b.user === user) return false;
+      return true;
     });
 
     console.log("Desconectado", global.boards);
