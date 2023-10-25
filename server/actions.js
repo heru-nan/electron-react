@@ -133,7 +133,6 @@ const attack = (user, position) => {
     console.log("EN ATACK", boards);
     // find the board of the opponent using user field
     const boardObj = boards.find((b) => b.user !== user);
-
     if (boardObj.board[position[0]][position[1]] === 1) {
       boardObj.board[position[0]][position[1]] = 2;
       status = 1;

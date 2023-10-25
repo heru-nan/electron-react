@@ -23,7 +23,7 @@ export default function Game() {
   const [route, setRoute] = useState({ ip: "", port: "" });
   const [connection, setConnection] = useState(false);
   const [botStatus, setBotStatus] = useState(false);
-  const [yourTurn, setYourTurn] = useState(false);
+  const [yourTurn, setYourTurn] = useState(true);
   const [win, setWin] = useState(false);
   const [lose, setLose] = useState(false);
 
@@ -73,6 +73,7 @@ export default function Game() {
             break;
           case "s":
             if (status === 1) setBuilding(true);
+
             //console.log("Listo para jugar");
             break;
           case "b":
@@ -228,6 +229,11 @@ export default function Game() {
   );
 
   const onBuild = () => {
+    setShips({
+      s: [0, 0, 0],
+      b: [1, 1, 0],
+      p: [2, 2, 0],
+    });
     const json = {
       action: "b",
       ships,

@@ -11,7 +11,7 @@ const {
   select,
 } = require("./actions.js");
 
-const PORT = 12345; // Puerto en el que el servidor escuchará
+const PORT = 20001; // Puerto en el que el servidor escuchará
 
 global.players = [];
 global.boards = [];
@@ -68,6 +68,7 @@ server.on("message", (msg, remoteInfo) => {
           if (error) {
             console.error("Error al enviar la respuesta al cliente:", error);
           }
+          console.log("mensaje enviado al cliente", response);
         }
       );
     };
@@ -86,6 +87,8 @@ server.on("message", (msg, remoteInfo) => {
       case "c":
         result = connection(user);
         if (result.err) response.err = result.err;
+
+        response.status = 1;
         defaultResponse();
         break;
       case "s":

@@ -1,3 +1,29 @@
+Para probar en local
+
+...Luego de haber instalado todas las dependencias, como para node(v16), react y electron
+
+Iniciar el servidor
+
+```
+    yarn server
+```
+
+En otra terminar iniciar un cliente
+
+```
+    $env:PORT=3000
+    yarn dev
+```
+
+En otra terminal para iniciar otro cliente
+
+```
+    $env:PORT=4000
+    yarn dev
+```
+
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
