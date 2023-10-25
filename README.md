@@ -1,4 +1,6 @@
-Para probar en local
+Para probar en local (yarn version1.22) Powershell, window10
+
+`yarn install`
 
 ...Luego de haber instalado todas las dependencias, como para node(v16), react y electron
 
